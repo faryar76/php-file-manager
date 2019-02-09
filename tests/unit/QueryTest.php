@@ -113,4 +113,20 @@ class QueryTest extends TestCase
         // print_r($actual);
         $this->assertCount(4,$actual);
     }
+    public function test_delete_files_and_directory()
+    {
+        $this->query->where('name','one')->delete(function($item,$index)
+        {
+            return true;  
+        });
+        $actual=$this->query->result();
+        $this->assertCount(1,$actual);
+        $this->assertFileNotExists($this->vfd->url().DIRECTORY_SEPARATOR.'one');
+
+        mkdir($this->vfd->url().DIRECTORY_SEPARATOR.'folder_Test');
+        $this->query->where('type','dir')->delete(true);
+        $actual=$this->query->result();
+        $this->assertCount(1,$actual);
+
+    }
 }
