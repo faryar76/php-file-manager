@@ -8,11 +8,12 @@ use org\bovigo\vfs\vfsStream;
 
 class QueryTest extends TestCase
 {
+    public $vfd;
     protected function setUp() : void 
     {
         $fileManager=new FileManager;
-        $vfd=vfsStream::setup('baseFolder',null,['one'=>'d','two'=>'d']);
-        $fileManager->setPath($vfd->url());
+        $this->vfd=vfsStream::setup('baseFolder',null,['one'=>'d','two'=>'d']);
+        $fileManager->setPath($this->vfd->url());
         $this->query=new Query($fileManager);
     }
     public function test_add_new_condition()
@@ -70,9 +71,46 @@ class QueryTest extends TestCase
         $actual=$this->query->where('name','like','one')->result();
         $this->assertEquals([['name'=>'one','path'=>'vfs://baseFolder/one']],$actual);
     }
+
     public function test_Must_return_exception_on_invalid_regex()
     {
         $this->expectException(\InvalidArgumentException::class);
         $actual=$this->query->where('name','regex','one')->result();
+    }
+
+    public function test_must_rename_results()
+    {        
+        $this->query->where('name','like','one')->rename('newname');
+        $actual=$this->query->where('name','newname')->result();
+        $expected=[['path' => 'vfs://baseFolder/newname']];
+        $this->assertEquals($expected,$actual);
+
+        mkdir($this->vfd->url().DIRECTORY_SEPARATOR.'folder1');
+        $this->query->where('name','folder1')->rename('newname');
+
+        $actual=$this->query->where('name','newname1')->result();
+        $expected=[['path' => 'vfs://baseFolder/newname1']];
+        $this->assertEquals($expected,$actual);
+    }
+    public function test_rename_multi_item()
+    {
+        touch($this->vfd->url().DIRECTORY_SEPARATOR.'filed');
+        $this->query->where('type','file')->rename('files');
+        $actual=$this->query->where('type','file')->result();
+        $this->assertCount(3,$actual);
+    }
+    public function test_rename_multi_item_with_object()
+    {
+        touch($this->vfd->url().DIRECTORY_SEPARATOR.'somename');
+        touch($this->vfd->url().DIRECTORY_SEPARATOR.'someothername');
+
+        $this->query->where('type','file')->rename(function($item,$index)
+        {
+            return 'other'.$index;  
+        });
+
+        $actual=$this->query->where('type','file')->result();
+        // print_r($actual);
+        $this->assertCount(4,$actual);
     }
 }
