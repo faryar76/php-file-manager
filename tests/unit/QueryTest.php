@@ -70,4 +70,9 @@ class QueryTest extends TestCase
         $actual=$this->query->where('name','like','one')->result();
         $this->assertEquals([['name'=>'one','path'=>'vfs://baseFolder/one']],$actual);
     }
+    public function test_Must_return_exception_on_invalid_regex()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $actual=$this->query->where('name','regex','one')->result();
+    }
 }
