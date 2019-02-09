@@ -1,0 +1,11 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Faryar\\":"src/"
+        }
+    },
+    "require": {
+        "mikey179/vfsStream": "^1.6",
+        "phpunit/phpunit": "^8.0"
+    }
+}
