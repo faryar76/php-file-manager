@@ -87,6 +87,8 @@ class Query
                 return true;
                 case (strtolower($operator) == 'like'   && strstr($actual,$value)):
                 return true;
+                case (strtolower($operator) == 'notlike' && !strstr($actual,$value)):
+                return true;
                 case ($operator == '>='     && $actual >= $value):
                 return true;
                 case ($operator == '<='     && $actual <= $value):
