@@ -93,11 +93,20 @@ class Query
                 return true;
                 case ($operator == '!='     && $actual != $value):
                 return true;
-                case (strtolower($operator) == 'regex'  && preg_match($value,$actual)):
+                case (strtolower($operator) == 'regex' && $this->validate_regex($value)  && preg_match($value,$actual)):
                 return true;
             default:
                 return false;
         }
+    }
+    private function validate_regex($regex)
+    {
+            
+        if(@preg_match($regex,null)===false)
+        {
+            throw new \InvalidArgumentException("Error on regex syntax : ". preg_last_error() ?? "");
+        }
+        return true;
     }
     private function reset_appends()
     {
