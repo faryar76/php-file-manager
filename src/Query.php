@@ -133,4 +133,26 @@ class Query
     {
         return $this->appends;
     }
+    public function rename($newName)
+    {
+        $items=$this->result();
+       
+        
+        foreach($items as $index=>$item)
+        { 
+            $name=$newName;
+            if(is_object($newName) && is_callable($newName))
+            {
+                $name=$newName($item,$index);
+            }
+            $file_number=0;
+            $base_path=dirname($item['path']).DIRECTORY_SEPARATOR.$name;
+            while(file_exists($base_path.($file_number==0 ? "" : $file_number)))
+            {
+                $file_number+=1;
+            }
+            rename($item['path'],$base_path.($file_number==0 ? "" : $file_number));
+        }
+        return true;
+    }
 }
