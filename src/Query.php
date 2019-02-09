@@ -136,8 +136,6 @@ class Query
     public function rename($newName)
     {
         $items=$this->result();
-       
-        
         foreach($items as $index=>$item)
         { 
             $name=$newName;
@@ -154,5 +152,26 @@ class Query
             rename($item['path'],$base_path.($file_number==0 ? "" : $file_number));
         }
         return true;
+    }
+    public function delete($input_item)
+    {
+        $result=$input_item;
+        $items=$this->result();
+        foreach($items as $index=>$item)
+        { 
+            if(is_object($input_item) && is_callable($input_item))
+            {
+                $result=$input_item($item,$index);
+            }
+            if($result)
+            {
+                if(is_file($item['path']))
+                {
+                    return unlink($item['path']);
+                }
+                return rmdir($item['path']);
+            }
+        }
+        return false;
     }
 }
