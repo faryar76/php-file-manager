@@ -1,0 +1,4 @@
+coverageFolder
+vendor
+index.php
+.phpunit.result.cache
