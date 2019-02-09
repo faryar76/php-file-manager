@@ -15,6 +15,7 @@ class Condition
                 '<=',
                 'regex',
                 'like',
+                'notlike',
             ];
 
     protected $fields=
@@ -53,9 +54,13 @@ class Condition
     private function validateBeforeAdd($args)
     {
         switch (true) {
-            case (!is_array($args)):
+            
+            case (!is_array($args) ):
             throw new \InvalidArgumentException(sprintf("input must be array %s given",gettype($args)));
-
+           
+            case (empty($args)):
+            throw new \InvalidArgumentException("input must be array with value NULL gived");
+            
             case (!in_array($args[0],$this->fields)):
             throw new \InvalidArgumentException(sprintf("fields [%s] not found!",$args[0]));
 
