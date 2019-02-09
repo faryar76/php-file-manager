@@ -64,5 +64,10 @@ class ConditionTest extends TestCase
         $actual=$this->condition->get();
         $this->assertCount(1,$actual); 
     }
+    public function test_must_return_exception_on_where_without_parametr()
+    {
+        $this->expectException(\InvalidArgumentException::class);        
+        $this->condition->add('add',[]);
+    }
 
 }
